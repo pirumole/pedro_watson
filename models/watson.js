@@ -6,7 +6,7 @@ class Watson {
    * criando estancia da classe da IBM.
    */
   constructor() {
-    this.watsonModule = require('ibm-watson/assistant/v2');
+    this.watsonModule = require('ibm-watson/assistant/v1');
     this.IamAuthenticator = require('ibm-watson/auth').IamAuthenticator;
 
     this.Assistant = new this.watsonModule({
@@ -14,8 +14,12 @@ class Watson {
       version: process.env.ASSISTANT_VERSION,
       authenticator: new this.IamAuthenticator({
         apikey: process.env.ASSISTANT_PASS
-      })
+      }),
+      headers: {
+        'X-Watson-Learning-Opt-Out': 'true'
+      }
     });
+    this.section = null;
   }
 
   async sendMessage(message = "", context = {}) {
@@ -26,7 +30,7 @@ class Watson {
       }
     };
 
-    if (Object.keys(context).length)
+    if (context && Object.keys(context).length)
       toMessage.context = context;
 
     try {
@@ -42,4 +46,4 @@ class Watson {
   }
 }
 
-module.exports = new Watson;
+module.exports = Watson;
